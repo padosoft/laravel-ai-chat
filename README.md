@@ -7,7 +7,7 @@
 
 <p align="center">
   <img alt="License" src="https://img.shields.io/badge/license-MIT-blue.svg">
-  <img alt="PHP" src="https://img.shields.io/badge/php-8.3%20%7C%208.4-777BB4">
+  <img alt="PHP" src="https://img.shields.io/badge/php-8.3%2B-777BB4">
   <img alt="Laravel" src="https://img.shields.io/badge/laravel-13-FF2D20">
   <img alt="Node" src="https://img.shields.io/badge/node-20%2B-339933">
   <img alt="React" src="https://img.shields.io/badge/react-18-61DAFB">
