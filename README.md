@@ -20,10 +20,6 @@
 ---
 
 <p align="center">
-  <img alt="laravel-ai-chat — home screen with five suggested prompts wired to demo artifact tools" src="resources/screenshoots/chat.png" width="900">
-</p>
-
-<p align="center">
   <img alt="laravel-ai-chat — animated demo: streaming reply with image · doc · links · code · table artifacts rendering inline" src="resources/screenshoots/Laravel-AI-Chat-Demo.gif" width="900">
 </p>
 
