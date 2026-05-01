@@ -15,12 +15,12 @@ class CodeSnippetTool implements Tool
 
     public function schema(JsonSchema $schema): array
     {
-        return $schema->object()
-            ->property('language', $schema->string()->required()
-                ->description('Programming language tag (e.g. "php", "ts", "bash", "json").'))
-            ->property('topic', $schema->string()->required()
-                ->description('Short topic the snippet should illustrate.'))
-            ->toArray();
+        return [
+            'language' => $schema->string()->required()
+                ->description('Programming language tag (e.g. "php", "ts", "bash", "json").'),
+            'topic'    => $schema->string()->required()
+                ->description('Short topic the snippet should illustrate.'),
+        ];
     }
 
     public function handle(ToolRequest $request): string

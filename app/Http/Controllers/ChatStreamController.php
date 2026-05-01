@@ -14,7 +14,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Laravel\Ai\AnonymousAgent;
 use Laravel\Ai\Responses\StreamedAgentResponse;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Streaming chat endpoint.
@@ -48,8 +47,13 @@ class ChatStreamController extends Controller
     /**
      * POST /api/chat/stream — send a user message and stream the
      * assistant reply token-by-token in Vercel AI SDK protocol shape.
+     *
+     * The return type is intentionally untyped: the validation path
+     * yields a JsonResponse, the happy path yields a StreamableAgentResponse
+     * (which is Responsable, not a Symfony Response itself) — Laravel
+     * coerces both to a real Response via the Responsable contract.
      */
-    public function store(Request $request): Response
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'content'         => ['required', 'string', 'max:4000'],

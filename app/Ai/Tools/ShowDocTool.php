@@ -15,14 +15,14 @@ class ShowDocTool implements Tool
 
     public function schema(JsonSchema $schema): array
     {
-        return $schema->object()
-            ->property('title', $schema->string()->required()
-                ->description('Short title of the document.'))
-            ->property('snippet', $schema->string()
-                ->description('Short preview snippet (1-2 sentences) describing the document content.'))
-            ->property('pages', $schema->integer()
-                ->description('Number of pages. Defaults to 4.'))
-            ->toArray();
+        return [
+            'title'   => $schema->string()->required()
+                ->description('Short title of the document.'),
+            'snippet' => $schema->string()
+                ->description('Short preview snippet (1-2 sentences) describing the document content.'),
+            'pages'   => $schema->integer()
+                ->description('Number of pages. Defaults to 4.'),
+        ];
     }
 
     public function handle(ToolRequest $request): string

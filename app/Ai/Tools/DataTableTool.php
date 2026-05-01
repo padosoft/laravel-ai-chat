@@ -15,10 +15,10 @@ class DataTableTool implements Tool
 
     public function schema(JsonSchema $schema): array
     {
-        return $schema->object()
-            ->property('topic', $schema->string()->required()
-                ->description('What the table should show (e.g. "regolo models", "laravel ai providers").'))
-            ->toArray();
+        return [
+            'topic' => $schema->string()->required()
+                ->description('What the table should show (e.g. "regolo models", "laravel ai providers").'),
+        ];
     }
 
     public function handle(ToolRequest $request): string

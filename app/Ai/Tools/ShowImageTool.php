@@ -15,12 +15,12 @@ class ShowImageTool implements Tool
 
     public function schema(JsonSchema $schema): array
     {
-        return $schema->object()
-            ->property('subject', $schema->string()->required()
-                ->description('Short, vivid subject of the image (e.g. "Colosseum at sunset", "Italian espresso macchiato").'))
-            ->property('caption', $schema->string()
-                ->description('Optional caption rendered below the image.'))
-            ->toArray();
+        return [
+            'subject' => $schema->string()->required()
+                ->description('Short, vivid subject of the image (e.g. "Colosseum at sunset", "Italian espresso macchiato").'),
+            'caption' => $schema->string()
+                ->description('Optional caption rendered below the image.'),
+        ];
     }
 
     public function handle(ToolRequest $request): string

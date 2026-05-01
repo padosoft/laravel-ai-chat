@@ -15,10 +15,10 @@ class ListLinksTool implements Tool
 
     public function schema(JsonSchema $schema): array
     {
-        return $schema->object()
-            ->property('topic', $schema->string()->required()
-                ->description('The topic the user wants links for (e.g. "regolo", "laravel ai", "padosoft").'))
-            ->toArray();
+        return [
+            'topic' => $schema->string()->required()
+                ->description('The topic the user wants links for (e.g. "regolo", "laravel ai", "padosoft").'),
+        ];
     }
 
     public function handle(ToolRequest $request): string
