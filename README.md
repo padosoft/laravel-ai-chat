@@ -19,6 +19,25 @@
 
 ---
 
+<p align="center">
+  <img alt="laravel-ai-chat — home screen with five suggested prompts wired to demo artifact tools" src="resources/screenshoots/chat.png" width="900">
+</p>
+
+<p align="center">
+  <a href="https://github.com/padosoft/laravel-ai-chat/raw/main/resources/screenshoots/Laravel-AI-Chat-Demo.mp4">
+    <img alt="▶ Watch the 30-second demo (image · doc · links · code · table artifacts streaming live)" src="https://img.shields.io/badge/%E2%96%B6%20watch-30s%20demo%20video-blue?style=for-the-badge">
+  </a>
+</p>
+
+<details>
+  <summary><strong>Or play the demo inline ▾</strong></summary>
+
+<video src="https://github.com/padosoft/laravel-ai-chat/raw/main/resources/screenshoots/Laravel-AI-Chat-Demo.mp4" controls width="900"></video>
+
+</details>
+
+---
+
 ## Table of contents
 
 1. [Why this demo](#why-this-demo)
