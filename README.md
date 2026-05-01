@@ -76,13 +76,13 @@ If you want the heavy enterprise version (RAG, embeddings, citations, refusal lo
 ```mermaid
 flowchart LR
     subgraph Browser
-        UI[React SPA<br/>@ai-sdk/react useChat&#40;&#41;]
+        UI["React SPA<br/>@ai-sdk/react useChat()"]
     end
 
     subgraph Laravel["Laravel 13 (this repo)"]
         Route["POST /api/chat/stream"]
-        Controller[ChatStreamController]
-        Agent[AnonymousAgent<br/>+ 5 Tools]
+        Controller["ChatStreamController"]
+        Agent["AnonymousAgent<br/>+ 5 Tools"]
     end
 
     subgraph SDK["laravel/ai SDK"]
@@ -90,22 +90,22 @@ flowchart LR
     end
 
     subgraph Pkg["padosoft/laravel-ai-regolo"]
-        Provider[RegoloProvider]
+        Provider["RegoloProvider"]
     end
 
     subgraph Cloud["Italian sovereign cloud"]
-        Regolo[(api.regolo.ai/v1)]
+        Regolo[("api.regolo.ai/v1")]
     end
 
-    UI -->|POST {content, conversation_id}| Route
+    UI -->|"POST &#123;content, conversation_id&#125;"| Route
     Route --> Controller
     Controller --> Agent
     Agent --> Stream
     Stream --> Provider
-    Provider -->|chat/completions stream| Regolo
-    Regolo -.->|SSE tokens + tool calls| UI
-    Stream -.->|then() callback| Controller
-    Controller -.->|persist messages + artifacts| Controller
+    Provider -->|"chat/completions stream"| Regolo
+    Regolo -.->|"SSE tokens + tool calls"| UI
+    Stream -.->|"then() callback"| Controller
+    Controller -.->|"persist messages + artifacts"| Controller
 ```
 
 The browser sends one POST with the user message; the controller persists the user turn, builds an `AnonymousAgent` with the 5 tools and the conversation history, and returns the streamable response. The Vercel UI Message Stream is consumed by `@ai-sdk/react` directly — when the model decides to call `ShowImageTool`, the JSON output flows back as a `tool-output-available` part, the React layer parses the artifact payload, and the matching renderer mounts inline in the assistant bubble. After the stream closes, the `then()` callback persists the assistant message + artifact metadata so a refresh repopulates the thread.
