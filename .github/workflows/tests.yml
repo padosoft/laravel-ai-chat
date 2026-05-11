@@ -21,7 +21,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.3', '8.4', '8.5']
+        # composer.lock pulls in Symfony 8 (requires PHP >= 8.4), so the
+        # CI matrix mirrors the resolved set: 8.4 + 8.5. The root
+        # composer.json requirement also pins `^8.4` accordingly.
+        php: ['8.4', '8.5']
 
     env:
       COMPOSER_PROCESS_TIMEOUT: 0
@@ -39,15 +42,32 @@ jobs:
           coverage: none
           tools: composer:v2
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
       - name: Cache Composer dependencies
         uses: actions/cache@v4
         with:
           path: vendor
-          key: composer-${{ matrix.php }}-${{ hashFiles('composer.json') }}
+          key: composer-${{ matrix.php }}-${{ hashFiles('composer.lock') }}
           restore-keys: composer-${{ matrix.php }}-
 
-      - name: Install dependencies
+      - name: Install PHP dependencies
         run: composer install --prefer-dist --no-progress
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build Vite assets
+        # `tests/Feature/ChatTest.php` and `ExampleTest.php` both hit
+        # `/` which renders `resources/views/app.blade.php` — that
+        # Blade pulls in the Vite manifest. Without a build the
+        # `@vite` directive throws "Vite manifest not found at
+        # public/build/manifest.json".
+        run: npm run build
 
       - name: Prepare .env for testing
         run: |
