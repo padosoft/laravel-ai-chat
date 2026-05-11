@@ -1,0 +1,109 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  phpunit:
+    runs-on: ubuntu-latest
+    name: PHPUnit (PHP ${{ matrix.php }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # composer.lock pulls in Symfony 8 (requires PHP >= 8.4), so the
+        # CI matrix mirrors the resolved set: 8.4 + 8.5. The root
+        # composer.json requirement also pins `^8.4` accordingly.
+        php: ['8.4', '8.5']
+
+    env:
+      COMPOSER_PROCESS_TIMEOUT: 0
+      COMPOSER_NO_INTERACTION: 1
+      COMPOSER_NO_AUDIT: 1
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, openssl, pdo, pdo_sqlite, sqlite3, tokenizer, xml, ctype, json, intl
+          coverage: none
+          tools: composer:v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ matrix.php }}-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-${{ matrix.php }}-
+
+      - name: Install PHP dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build Vite assets
+        # `tests/Feature/ChatTest.php` and `ExampleTest.php` both hit
+        # `/` which renders `resources/views/app.blade.php` — that
+        # Blade pulls in the Vite manifest. Without a build the
+        # `@vite` directive throws "Vite manifest not found at
+        # public/build/manifest.json".
+        run: npm run build
+
+      - name: Prepare .env for testing
+        run: |
+          cp .env.example .env
+          sed -i 's|^APP_ENV=.*|APP_ENV=testing|' .env
+          sed -i 's|^DB_CONNECTION=.*|DB_CONNECTION=sqlite|' .env
+          touch database/database.sqlite
+
+      - name: Generate application key
+        run: php artisan key:generate --force
+
+      - name: Migrate test database
+        env:
+          APP_ENV: testing
+        run: php artisan migrate --force
+
+      - name: Run PHPUnit (php artisan test)
+        env:
+          APP_ENV: testing
+        run: php artisan test --no-coverage
+
+  vitest:
+    runs-on: ubuntu-latest
+    name: Vitest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Run Vitest
+        run: npm test
